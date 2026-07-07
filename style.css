@@ -1,0 +1,331 @@
+/* ===========================
+   IMPORT FONT
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html, body, [class*="css"]{
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ===========================
+   APP BACKGROUND
+=========================== */
+
+.stApp{
+    background:
+    radial-gradient(circle at top right,#d7f5ff 0%,transparent 28%),
+    radial-gradient(circle at bottom left,#dfffe8 0%,transparent 32%),
+    linear-gradient(135deg,#f8fbff,#ffffff);
+}
+
+
+/* Hide Streamlit */
+#MainMenu,
+footer,
+header{
+    visibility:hidden;
+}
+
+
+/* ===========================
+   SIDEBAR
+=========================== */
+
+section[data-testid="stSidebar"]{
+
+    background:
+    linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #eef8ff 45%,
+        #eafbf0 100%
+    );
+
+    border-right:1px solid #dde8ef;
+
+    padding-top:30px;
+}
+
+
+/* Sidebar title */
+
+.sidebar-title{
+
+    font-size:28px;
+    font-weight:700;
+    color:#0d47a1;
+
+    margin-bottom:8px;
+}
+
+.sidebar-sub{
+
+    color:#555;
+    font-size:15px;
+    margin-bottom:25px;
+}
+
+
+/* ===========================
+   STATUS CARD
+=========================== */
+
+.status-card{
+
+    background:white;
+
+    border-left:6px solid #2e7d32;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+    margin-bottom:20px;
+}
+
+/* ===========================
+   MAIN TITLE
+=========================== */
+
+.main-title{
+
+    font-size:54px;
+
+    font-weight:700;
+
+    background:linear-gradient(
+        90deg,
+        #FF9933,
+        #0A6BD8,
+        #138808
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:5px;
+}
+
+
+.subtitle{
+
+    font-size:18px;
+
+    color:#4d5d70;
+
+    margin-top:8px;
+
+    margin-bottom:30px;
+}
+
+
+/* ===========================
+   HERO CARD
+=========================== */
+
+.hero-card{
+
+    background:rgba(255,255,255,.7);
+
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    border-radius:25px;
+
+    padding:35px;
+
+    box-shadow:
+    0 10px 35px rgba(0,0,0,.08);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/* Ashoka Chakra watermark */
+
+.hero-card::after{
+
+    content:"☸";
+
+    position:absolute;
+
+    right:25px;
+
+    top:10px;
+
+    font-size:180px;
+
+    color:rgba(10,107,216,.05);
+
+}
+
+
+/* ===========================
+   CHAT INPUT
+=========================== */
+
+.stChatInput{
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+}
+
+
+/* ===========================
+   USER CHAT
+=========================== */
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]){
+
+    background:#fff8ef;
+
+    border-left:5px solid #FF9933;
+
+    border-radius:18px;
+
+    padding:15px;
+
+    margin-bottom:18px;
+}
+
+
+/* ===========================
+   BOT CHAT
+=========================== */
+
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]){
+
+    background:#f1fff4;
+
+    border-left:5px solid #138808;
+
+    border-radius:18px;
+
+    padding:15px;
+
+    margin-bottom:18px;
+}
+
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.stButton>button{
+
+    width:100%;
+
+    border-radius:12px;
+
+    background:linear-gradient(
+    90deg,
+    #0A6BD8,
+    #138808);
+
+    color:white;
+
+    font-weight:600;
+
+    border:none;
+
+    height:45px;
+
+    transition:.3s;
+}
+
+.stButton>button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+
+/* ===========================
+   INPUT BOX
+=========================== */
+
+textarea{
+
+    font-size:16px !important;
+}
+
+
+/* ===========================
+   METRIC CARDS
+=========================== */
+
+.metric-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+
+/* ===========================
+   QUICK SUGGESTIONS
+=========================== */
+
+.suggestion{
+
+    display:inline-block;
+
+    padding:10px 18px;
+
+    margin:8px;
+
+    background:white;
+
+    border-radius:30px;
+
+    border:1px solid #d8e5f3;
+
+    transition:.3s;
+
+    cursor:pointer;
+
+    font-size:14px;
+}
+
+.suggestion:hover{
+
+    background:#0A6BD8;
+
+    color:white;
+
+}
+
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#0A6BD8;
+
+    border-radius:20px;
+}

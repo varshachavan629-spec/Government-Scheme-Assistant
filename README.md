@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🇮🇳 Government Scheme AI Assistant
 
 An AI-powered chatbot that answers questions about Indian Government Schemes using **Retrieval-Augmented Generation (RAG)**. The assistant retrieves information from official government PDF documents and generates accurate, context-based responses using the **Groq Llama 3.1** Large Language Model.
@@ -319,3 +320,6 @@ This project is developed for educational and learning purposes.
 ---
 
 ⭐ If you found this project useful, consider giving it a **Star** on GitHub.
+=======
+# Government-Scheme-Assistant
+AI-powered RAG chatbot for Indian Government Schemes using LangChain, FAISS, Groq, and Streamlit

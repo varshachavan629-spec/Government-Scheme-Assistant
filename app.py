@@ -11,51 +11,71 @@ from langchain_core.output_parsers import StrOutputParser
 # ---------------- LOAD ENV ----------------
 load_dotenv()
 
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="Gov AI Assistant",
+    page_title="Government Scheme AI Assistant",
     page_icon="🇮🇳",
     layout="wide"
 )
 
-# ---------------- CUSTOM HEADER ----------------
+# ---------------- LOAD CSS ----------------
+def load_css():
+    with open("style.css", "r", encoding="utf-8") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css()
+
+# ---------------- HERO SECTION ----------------
 st.markdown("""
-    <style>
-        .main-title {
-            font-size: 40px;
-            font-weight: bold;
-            background: linear-gradient(90deg,#00C9FF,#92FE9D);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+<div class="hero-card">
 
-        .chat-box {
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-        }
+<div style="font-size:65px;text-align:center;">🇮🇳</div>
 
-        .user {
-            background-color: #DCF8C6;
-            text-align: right;
-        }
+<div class="main-title">
+Government Scheme AI Assistant
+</div>
 
-        .bot {
-            background-color: #F1F0F0;
-        }
-    </style>
+<div class="subtitle">
+Your trusted AI assistant for Indian Government Schemes.<br>
+Ask about <b>PM-KISAN</b>, <b>Ayushman Bharat</b>,
+<b>Aadhaar</b>, <b>Passport</b>,
+<b>Scholarships</b>, and many more.
+</div>
+
+</div>
 """, unsafe_allow_html=True)
-
-st.markdown("<div class='main-title'>🇮🇳 Government Scheme AI Assistant</div>", unsafe_allow_html=True)
-st.caption("Ask anything about PM-KISAN, Aadhaar, Passport, Ayushman Bharat")
 
 # ---------------- SIDEBAR ----------------
 with st.sidebar:
-    st.title("⚙️ Settings")
-    st.write("📌 Powered by Groq + FAISS")
-    st.success("AI Assistant Ready")
 
-    if st.button("🧹 Clear Chat"):
+    st.markdown("""
+    <div class="sidebar-title">
+    🏛 Government AI
+    </div>
+
+    <div class="sidebar-sub">
+    Powered by Groq • LangChain • FAISS
+    </div>
+
+    <div class="status-card">
+    🟢 AI Assistant Ready
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("🧹 Clear Chat", use_container_width=True):
         st.session_state.messages = []
+
+    st.markdown("---")
+
+    st.markdown("### Popular Schemes")
+
+    st.markdown("""
+    <div class="suggestion">🌾 PM-KISAN</div>
+    <div class="suggestion">🏥 Ayushman Bharat</div>
+    <div class="suggestion">🆔 Aadhaar</div>
+    <div class="suggestion">🛂 Passport</div>
+    <div class="suggestion">🎓 Scholarships</div>
+    """, unsafe_allow_html=True)
 
 # ---------------- LLM ----------------
 llm = ChatGroq(
@@ -65,32 +85,38 @@ llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
-# ---------------- VECTOR DB ----------------
+# ---------------- VECTOR DATABASE ----------------
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
+
 db = FAISS.load_local(
     "vectorstore/db_faiss",
-    HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"),
+    embeddings,
     allow_dangerous_deserialization=True
 )
 
 retriever = db.as_retriever(search_kwargs={"k": 4})
 
-# ---------------- CHAT MEMORY ----------------
+# ---------------- SESSION ----------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# ---------------- HELPERS ----------------
 def format_docs(docs):
-    return "\n\n".join(d.page_content for d in docs)
+    return "\n\n".join(doc.page_content for doc in docs)
 
 def get_history():
     return "\n".join(
-        f"{m['role']}: {m['content']}" for m in st.session_state.messages[-6:]
+        f"{msg['role']}: {msg['content']}"
+        for msg in st.session_state.messages[-6:]
     )
 
 # ---------------- PROMPTS ----------------
 rewrite_prompt = ChatPromptTemplate.from_template("""
-Rewrite question clearly using chat history if needed.
+Rewrite the question clearly using the chat history if required.
 
-Chat:
+Chat History:
 {chat_history}
 
 Question:
@@ -100,11 +126,11 @@ Question:
 rewrite_chain = rewrite_prompt | llm | StrOutputParser()
 
 final_prompt = ChatPromptTemplate.from_template("""
-You are a Government Scheme Assistant.
+You are an AI assistant for Indian Government Schemes.
 
-Use ONLY context.
+Answer ONLY from the provided context.
 
-Chat:
+Chat History:
 {chat_history}
 
 Context:
@@ -113,44 +139,57 @@ Context:
 Question:
 {question}
 
-Answer in short, clear points.
+Give a concise answer using bullet points wherever appropriate.
 """)
 
-# ---------------- DISPLAY CHAT ----------------
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+# ---------------- CHAT HISTORY ----------------
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# ---------------- INPUT ----------------
-query = st.chat_input("Ask about government schemes...")
+# ---------------- CHAT INPUT ----------------
+query = st.chat_input("💬 Ask about any Government Scheme...")
 
 if query:
 
-    st.session_state.messages.append({"role": "user", "content": query})
+    st.session_state.messages.append(
+        {"role": "user", "content": query}
+    )
 
     with st.chat_message("user"):
         st.markdown(query)
 
     history = get_history()
 
-    # rewrite
-    rewritten = rewrite_chain.invoke({
+    rewritten_query = rewrite_chain.invoke({
         "chat_history": history,
         "question": query
     }).strip()
 
-    # retrieve
-    docs = retriever.invoke(rewritten)
+    docs = retriever.invoke(rewritten_query)
+
     context = format_docs(docs)
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking... 🤖"):
-            answer = (final_prompt | llm | StrOutputParser()).invoke({
+
+        with st.spinner("Searching Government Schemes..."):
+
+            answer = (
+                final_prompt
+                | llm
+                | StrOutputParser()
+            ).invoke({
                 "chat_history": history,
                 "context": context,
-                "question": rewritten
+                "question": rewritten_query
             })
 
             st.markdown(answer)
 
-    st.session_state.messages.append({"role": "assistant", "content": answer});
+    st.session_state.messages.append(
+        {"role": "assistant", "content": answer}
+    )
+
+
+
+
